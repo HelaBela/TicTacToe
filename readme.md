@@ -1,4 +1,4 @@
-A game to be played in a browser console
+This is a game to be played in a browser console
 
 **To start:**
 
