@@ -16,7 +16,7 @@ function Draw() {
         convertPlacement(placement[7]),
         convertPlacement(placement[8]),
     ];
-    console.log('To choose a place on board type place() with a place number 0-8 inside brackets.');
+    console.log('To choose a place on board type place() with a place number 1-9 inside brackets.');
     console.log('Here is the current board:');
     console.log('');
 
@@ -33,7 +33,7 @@ function Draw() {
     console.log('');
 
     //logic whose turn it is:   
-    let playerName = 0;
+    let playerName;
 
     if (playerTurn === 1) {
         playerName = "X"; 
@@ -41,19 +41,13 @@ function Draw() {
         playerName = "O";
     }
 
-    if (winner === 1) {
-        console.log('X has won! type restart() to start a new game');
+    if (winner === 1 || winner === 2) {
+        console.log(playerName + ' has won! type restart() to start a new game');
 
-    } else if (winner === 2) {
-        console.log('O has won! type restart() to start a new game');
-
+    } else if (winner === 3) {
+        console.log('Its a draw, nobody wins. type restart() to start a new game');
     } else {
-        if (winner === 3) {
-            console.log('Its a draw, nobody wins. type restart() to start a new game');
-
-        } else {
-            console.log('Player ' + playerName + ' enter your choice');
-        }
+        console.log('Player ' + playerName + ' enter your choice');
     }
 }
  
@@ -75,15 +69,15 @@ function startGame() {
     winner = 0; // no winners at the start of the game.
     turn(1); //so that "X" starts. "X" always starts
 }
-function turn(player) {
-    playerTurn = player;
+function turn(nextPlayerTurn) {
+    playerTurn = nextPlayerTurn;
     Draw();
 }
-// noinspection JSUnusedGlobalSymbols
 function place(position) {
+    position--;
     //Checking if players chose numbers (positions) from 0 to 8
     if (position < 0 || position > 8) {
-        console.log("Choose numbers from 0 to 8 only.");
+        console.log("Choose numbers from 1 to 9 only.");
         return;
     }
     //Checking if someone has taken the spot already
@@ -92,11 +86,9 @@ function place(position) {
         return;
     }
     // setting the placement position to whose turn it is
-    placement[position] = playerTurn; 
-    //check for winner
-    const hasWinner = checkForWinner();
+    placement[position] = playerTurn;
 
-    if (hasWinner) {
+    if (checkForWinner()) {
         winner = playerTurn;
         Draw(); //to tell someone has won
     } else {
@@ -106,20 +98,16 @@ function place(position) {
             placement[5] !== 0 && placement[6] !== 0 && placement[7] !== 0 && placement[8] !== 0){
             winner = 3;
             Draw(); //to tell it is a draw
-            return; // Exiting the function, so it doesnt do the next player logic
+            return;
         }
         //This case there is no winner and no draw. Game goes on, changing the player turn
-        let nextPlayerTurn = 0;
-        if (playerTurn === 1) {
-            nextPlayerTurn = 2;
-        } else {
-            nextPlayerTurn = 1;
-        }
-        turn(nextPlayerTurn);
+
+
+        turn(playerTurn === 1 ? 2 : 1);
     }
 }
 function checkForWinner() {
-    return !!(checkRow(0, 1, 2) ||
+    return (checkRow(0, 1, 2) ||
         checkRow(3, 4, 5) ||
         checkRow(6, 7, 8) ||
         checkRow(0, 3, 6) ||
@@ -132,7 +120,6 @@ function checkForWinner() {
 function checkRow(number1, number2, number3) {
     return placement[number1] === playerTurn && placement[number2] === playerTurn && placement[number3] === playerTurn;
 }
-// noinspection JSUnusedGlobalSymbols
 function restart() {
     startGame();
 }
